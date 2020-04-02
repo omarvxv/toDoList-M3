@@ -46,7 +46,16 @@ class ManageList {
     sortList = () => {
         this.sortIcon.classList.toggle('sorted');
         const arrayOfTasks = [].map.call(this.listOfTasks, element => element);
-        let sortedArray = arrayOfTasks.sort((a, b) => a.children[1].value > b.children[1].value);
+        let sortedArray = arrayOfTasks.sort(callBackSort);
+        function callBackSort(a, b) {
+            a=a.children[1].value
+            b=b.children[1].value
+            if(!isNaN(a) && !isNaN(b)){
+                return a - b;
+            }else{
+                return a.localeCompare(b);
+            }
+        }
         if (this.sorted === true) {
             sortedArray = sortedArray.reverse();
         }
