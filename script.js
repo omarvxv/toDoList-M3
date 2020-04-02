@@ -8,6 +8,8 @@ class ManageList {
 
         this.taskListBlock = document.querySelector('.list');
         this.listOfTasks = this.taskListBlock.children;
+        this.ELEMENT_HEIGHT = 40;
+        this.LIST_BORDER = 2;
         this.sortIcon = document.querySelector('.sort');
         this.sortIcon.addEventListener('click', this.sortList);
         this.sorted = false;
@@ -56,6 +58,7 @@ class ManageList {
                 return a.localeCompare(b);
             }
         }
+
         if (this.sorted === true) {
             sortedArray = sortedArray.reverse();
         }
@@ -81,21 +84,19 @@ class ManageList {
         document.addEventListener('mousemove', this.handleMouseMove);
         document.addEventListener('mouseup', this.dropElement);
 
-        this.ELEMENT_HEIGHT = 40;
-        this.LIST_BORDER = 2;
         this.movedElement = e.target.parentNode;
         const elementBorder = this.movedElement.getBoundingClientRect();
         const listBorder = this.taskListBlock.getBoundingClientRect();
         this.y = e.pageY - elementBorder.top + listBorder.top;
 
-        this.movedElement.style.backgroundColor = '#FFDC40';
-        this.movedElement.style.position = 'absolute';
+        this.movedElement.style = 'background: #FFDC40; position: absolute;';
         this.listAfterClick = this.taskListBlock.getBoundingClientRect();
+        this.listHeight = this.listAfterClick.bottom - this.listAfterClick.top - this.LIST_BORDER;
         let top = 0;
         if (elementBorder.y - this.listAfterClick.y < 0) {
 
-        } else if (elementBorder.bottom - this.listAfterClick.y > this.listAfterClick.bottom - this.listAfterClick.top - this.LIST_BORDER) {
-            top = this.listAfterClick.bottom - this.listAfterClick.top - this.LIST_BORDER - this.ELEMENT_HEIGHT;
+        } else if (elementBorder.bottom - this.listAfterClick.y > this.listHeight) {
+            top = this.listHeight - this.ELEMENT_HEIGHT;
         } else {
             top = elementBorder.y - this.listAfterClick.y;
         }
@@ -103,8 +104,9 @@ class ManageList {
     }
     handleMouseMove = (e) => {
         this.taskListBlock.style.cursor = 'move';
-        if (e.pageY - this.y >= this.ELEMENT_HEIGHT / 2 && e.pageY <= this.listAfterClick.bottom - this.ELEMENT_HEIGHT / 2) {
-            this.movedElement.style.top = (e.pageY - this.y - this.ELEMENT_HEIGHT / 2) + 'px';
+        const elemCenter = this.ELEMENT_HEIGHT / 2;
+        if (e.pageY - this.y >= elemCenter && e.pageY <= this.listAfterClick.bottom - elemCenter) {
+            this.movedElement.style.top = (e.pageY - this.y - elemCenter) + 'px';
         }
     }
     dropElement = () => {
@@ -112,7 +114,7 @@ class ManageList {
         document.removeEventListener('mousemove', this.handleMouseMove);
 
         let movedElementClone = this.taskListBlock.removeChild(this.movedElement);
-        let position = Math.floor(movedElementClone.style.top.slice(0, -2) / this.ELEMENT_HEIGHT);
+        let position = Math.round(movedElementClone.style.top.slice(0, -2) / this.ELEMENT_HEIGHT);
 
         let inPosition = this.taskListBlock.children[position];
         let ratio = this.movedElement.style.top.slice(0, -2) / this.ELEMENT_HEIGHT;
