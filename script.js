@@ -1,6 +1,6 @@
 class ManageList {
     constructor() {
-        window.addEventListener('load', (event) => this.addTask(event));
+        window.addEventListener('load', () => this.addTask());
         document.querySelector('.button').addEventListener('click', this.addTask);
         document.querySelector('.add-task').addEventListener('keyup', event => {
             if (event.key === 'Enter') this.addTask()
