@@ -47,16 +47,12 @@ class ManageList {
 
     sortList = () => {
         this.sortIcon.classList.toggle('sorted');
-        const arrayOfTasks = [].map.call(this.listOfTasks, element => element);  // массив списка находящегося на странице
-        let sortedArray = arrayOfTasks.sort(callBackSort);  // отсортированный список
+        let sortedArray = [...this.listOfTasks].sort(callBackSort);  // отсортированный список
         function callBackSort(a, b) {   // колбэк функция для правильной сортировки элементов
             a=a.children[1].value
             b=b.children[1].value
-            if(!isNaN(a) && !isNaN(b)){
-                return a - b;
-            }else{
-                return a.localeCompare(b);
-            }
+            if(!isNaN(a) && !isNaN(b)) return a - b;
+            else return a.localeCompare(b);
         }
 
         if (this.sorted === true) {
