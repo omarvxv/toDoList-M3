@@ -74,7 +74,7 @@ class ManageList {
     }
 
     moveTaskLine = e => {
-        if (this.listOfTasks.length <= 1) {
+        if (this.listOfTasks.length <= 2) {
             return;
         }
         document.addEventListener('mousemove', this.handleMouseMove);
