@@ -9,7 +9,7 @@ class ManageList {
         this.taskListBlock = document.querySelector('.list');
         this.listOfTasks = this.taskListBlock.children;
         this.ELEMENT_HEIGHT = 40;  // высота элемента списка
-        this.LIST_BORDER = 2;  // сумма границ списка (top + bottom 1px)
+        this.BORDER = 1;  // граница списка
         this.sortIcon = document.querySelector('.sort');
         this.sortIcon.addEventListener('click', this.sortList);
         this.sorted = false;
@@ -22,7 +22,7 @@ class ManageList {
         this.taskListBlock.lastElementChild.querySelector('.task').focus();  // фокусируемся на последнем элементе
     }
 
-    generateTaskLine(value) {  
+    generateTaskLine(value) {
         const taskBlock = document.createElement('div');
         const dragPoint = document.createElement('div');
         const inputLine = document.createElement('input');
@@ -49,9 +49,9 @@ class ManageList {
         this.sortIcon.classList.toggle('sorted');
         let sortedArray = [...this.listOfTasks].sort(callBackSort);  // отсортированный список
         function callBackSort(a, b) {   // колбэк функция для правильной сортировки элементов
-            a=a.children[1].value
-            b=b.children[1].value
-            if(!isNaN(a) && !isNaN(b)) return a - b;
+            a = a.children[1].value
+            b = b.children[1].value
+            if (!isNaN(a) && !isNaN(b)) return a - b;
             else return a.localeCompare(b);
         }
 
@@ -74,7 +74,7 @@ class ManageList {
     }
 
     moveTaskLine = (e) => {
-        if (this.listOfTasks.length == 1) {
+        if (this.listOfTasks.length <= 1) {
             return;
         }
         document.addEventListener('mousemove', this.handleMouseMove);
@@ -82,27 +82,21 @@ class ManageList {
 
         this.movedElement = e.target.parentNode;  // перетаскиваемый элемент
         const elementBorder = this.movedElement.getBoundingClientRect();  // границы передвигающегося элемента
-        const listBorder = this.taskListBlock.getBoundingClientRect();  // границы списка (родитель)
-        this.y = e.pageY - elementBorder.top + listBorder.top; // расстояние от верхней точки окна до приблизительно центра элемента
-                                                               // касающегося верхней точки своего родителя
-        this.movedElement.style = 'background: #FFDC40; position: absolute;';
-        this.listAfterClick = this.taskListBlock.getBoundingClientRect();  // границы списка после вытаскивания элемента из него
-        this.listHeight = this.listAfterClick.bottom - this.listAfterClick.top - this.LIST_BORDER;  // высота изменённого спика
-        let top = 0;  // расстояние от верха родителя до перетаскиваемого элемента
-        if (elementBorder.y - this.listAfterClick.y < 0) {
+        this.movedElement.style = 'position: absolute; background: #FFDC40;';
+        this.listAfterClick = this.taskListBlock.getBoundingClientRect();  // границы списка после вытаскивания элемента из него                                                        
+        this.clickToTop = e.pageY - elementBorder.top; // расстояние от точки клика до верха элемента
+        this.clickToBottom = this.ELEMENT_HEIGHT - this.clickToTop;  // расстояние от точки клика до низа элемента
 
-        } else if (elementBorder.bottom - this.listAfterClick.y > this.listHeight) {
-            top = this.listHeight - this.ELEMENT_HEIGHT;
-        } else {
-            top = elementBorder.y - this.listAfterClick.y;
-        }
+        let top = elementBorder.top - (this.listAfterClick.top + this.BORDER);  // расстояние от верха списка до верха элемента
+        if (this.listAfterClick.top > elementBorder.top) top = 0;
+        else if (elementBorder.bottom > this.listAfterClick.bottom) top -= this.clickToTop;
         this.movedElement.style.top = top + 'px';
     }
     handleMouseMove = (e) => {
         this.taskListBlock.style.cursor = 'move';
-        const elemCenter = this.ELEMENT_HEIGHT / 2; // центр движущегося элемента
-        if (e.pageY - this.y >= elemCenter && e.pageY <= this.listAfterClick.bottom - elemCenter) {
-            this.movedElement.style.top = (e.pageY - this.y - elemCenter) + 'px';  // движение элемента по оси Y
+        if (e.pageY >= this.listAfterClick.top + this.BORDER + this.clickToTop &&
+            e.pageY <= this.listAfterClick.bottom - this.BORDER - this.clickToBottom) {
+            this.movedElement.style.top = (e.pageY - this.listAfterClick.top - this.BORDER - this.clickToTop) + 'px';  // движение элемента по оси Y
         }
     }
     dropElement = () => {
