@@ -1,6 +1,6 @@
 class ManageList {
     constructor() {
-        window.addEventListener('load', () => this.addTask());
+        window.addEventListener('load', this.addTask);
         document.querySelector('.button').addEventListener('click', this.addTask);
         document.querySelector('.add-task').addEventListener('keyup', event => {
             if (event.key === 'Enter') this.addTask()
@@ -73,7 +73,7 @@ class ManageList {
             element.remove();
     }
 
-    moveTaskLine = (e) => {
+    moveTaskLine = e => {
         if (this.listOfTasks.length <= 1) {
             return;
         }
@@ -92,7 +92,7 @@ class ManageList {
         else if (elementBorder.bottom > this.listAfterClick.bottom) top -= this.clickToTop;
         this.movedElement.style.top = top + 'px';
     }
-    handleMouseMove = (e) => {
+    handleMouseMove = e => {
         this.taskListBlock.style.cursor = 'move';
         if (e.pageY >= this.listAfterClick.top + this.BORDER + this.clickToTop &&
             e.pageY <= this.listAfterClick.bottom - this.BORDER - this.clickToBottom) {
