@@ -99,17 +99,16 @@ class ManageList {
             this.movedElement.style.top = (e.pageY - this.listAfterClick.top - this.BORDER - this.clickToTop) + 'px';  // движение элемента по оси Y
         }
     }
-    dropElement = () => {
+    dropElement = (e) => {
         document.removeEventListener('mouseup', this.dropElement);
         document.removeEventListener('mousemove', this.handleMouseMove);
 
         let movedElementClone = this.taskListBlock.removeChild(this.movedElement);  // клон вставляемого элемента
         let position = Math.round(movedElementClone.style.top.slice(0, -2) / this.ELEMENT_HEIGHT);  // позиция элемента
-
         let inPosition = this.taskListBlock.children[position];  // элемент находящийся на этой позиции
-        let ratio = this.movedElement.style.top.slice(0, -2) / this.ELEMENT_HEIGHT;  // склонность . определяется куда будет вставлен
-        movedElementClone.style = '';                                               // элемент относительно элемента находящегося 
-        const side = ratio < 0.5 ? 'beforebegin' : 'afterend';                      // на этой позиции
+        let ratio = (e.pageY - this.listAfterClick.top + this.BORDER) / this.ELEMENT_HEIGHT;  // склонность . определяется куда будет вставлен
+        movedElementClone.style = '';                                                         // элемент относительно элемента находящегося 
+        const side = (ratio-Math.trunc(ratio)) <= 0.5 ? 'beforebegin' : 'afterend';           // на этой позиции
 
         inPosition.insertAdjacentElement(side, movedElementClone);
     }
